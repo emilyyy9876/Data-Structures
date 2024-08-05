@@ -15,19 +15,18 @@ typedef struct _listnode
 {
 	int item;
 	struct _listnode *next;
-} ListNode;	// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
 typedef struct _linkedlist
 {
 	int size;
 	ListNode *head;
-} LinkedList;	// You should not change the definition of LinkedList
-
+} LinkedList; // You should not change the definition of LinkedList
 
 typedef struct _queue
 {
 	LinkedList ll;
-} Queue;  // You should not change the definition of Queue
+} Queue; // You should not change the definition of Queue
 
 ///////////////////////// function prototypes ////////////////////////////////////
 
@@ -41,7 +40,7 @@ int isEmptyQueue(Queue *q);
 void removeAllItemsFromQueue(Queue *q);
 
 void printList(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
 void removeAllItems(LinkedList *ll);
@@ -64,12 +63,10 @@ int main()
 	q.ll.head = NULL;
 	q.ll.size = 0;
 
-
 	printf("1: Insert an integer into the linked list:\n");
 	printf("2: Create the queue from the linked list:\n");
 	printf("3: Remove odd numbers from the queue:\n");
 	printf("0: Quit:\n");
-
 
 	while (c != 0)
 	{
@@ -91,6 +88,7 @@ int main()
 			printList(&(q.ll));
 			break;
 		case 3:
+
 			removeOddValues(&q); // You need to code this function
 			printf("The resulting queue after removing odd integers is: ");
 			printList(&(q.ll));
@@ -105,35 +103,97 @@ int main()
 			printf("Choice unknown;\n");
 			break;
 		}
-
 	}
 
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////
 
 void createQueueFromLinkedList(LinkedList *ll, Queue *q)
 {
-	/* add your code here */
+
+	if (ll == NULL || ll->head == NULL || ll->size == 0)
+		return;
+
+	// 만약 q가 비워져 있지 않으면, 비우기
+	if (!isEmptyQueue(q))
+	{
+		removeAllItemsFromQueue(q);
+	}
+	// removeAllItemsFromQueue(q); // 이미 큐를 비우는 함수가 존재함
+
+	// if (q->ll.size == 0 || q->ll.head == NULL)
+	// 	q->ll.size = 0, q->ll.head = NULL;
+	// ll 상 현재 노드 변수
+	ListNode *cur = ll->head;
+	// ll 순회
+	while (cur != NULL)
+	{
+		enqueue(q, cur->item);
+		cur = cur->next;
+	}
 }
 
 void removeOddValues(Queue *q)
 {
-	/* add your code here */
+	if (q->ll.head == NULL || q->ll.size == 0)
+		return;
+	// Queue temp;
+	// temp.ll.size = 0;
+	// temp.ll.head = NULL;
+
+	// temp를 선언만하고, 할당하지 않아서 발생......!!!!!!!!-> 변수가 초기화 되지 않음!!! 동적할당 필요/ 다 쓴 후에는 free 시켜야
+	//---> 포인터변수는 주소를 저장할 주소임, 변수는 그 자체로 주소
+	//---> 그니깐, <주소>를 저장할 "주소"만 정하고, <주소>는 지정을 안해줬으니깐 segmentaion fault가 생기거나, 쓰레기 값이 나옴
+
+	// Queue *temp;
+	Queue *temp = (Queue *)malloc(sizeof(Queue));
+
+	/////////////
+	if (temp == NULL)
+	{
+		printf("Memory allocation failed.\n");
+		return;
+	}
+	//////////////
+
+	temp->ll.size = 0;
+	temp->ll.head = NULL;
+
+	while (!isEmptyQueue(q))
+	{
+		int item = dequeue(q);
+		if (item % 2 == 0)
+		{
+			enqueue(temp, item);
+			// enqueue(&temp, item);
+		}
+	}
+	// while (!isEmptyQueue(&temp))
+	while (!isEmptyQueue(temp))
+	{
+		int item = dequeue(temp);
+		// int item = dequeue(&temp);
+		enqueue(q, item);
+	}
+	// 함수 끝나면 temp를 free 시키기
+	free(temp);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void enqueue(Queue *q, int item) {
+void enqueue(Queue *q, int item)
+{
 	insertNode(&(q->ll), q->ll.size, item);
 }
 
-int dequeue(Queue *q) {
+int dequeue(Queue *q)
+{
 	int item;
 
-	if (!isEmptyQueue(q)) {
+	if (!isEmptyQueue(q))
+	{
 		item = ((q->ll).head)->item;
 		removeNode(&(q->ll), 0);
 		return item;
@@ -141,7 +201,8 @@ int dequeue(Queue *q) {
 	return -1;
 }
 
-int isEmptyQueue(Queue *q) {
+int isEmptyQueue(Queue *q)
+{
 	if ((q->ll).size == 0)
 		return 1;
 	return 0;
@@ -158,8 +219,8 @@ void removeAllItemsFromQueue(Queue *q)
 		dequeue(q);
 }
 
-
-void printList(LinkedList *ll){
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -175,13 +236,13 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-
 void removeAllItems(LinkedList *ll)
 {
 	ListNode *cur = ll->head;
 	ListNode *tmp;
 
-	while (cur != NULL){
+	while (cur != NULL)
+	{
 		tmp = cur->next;
 		free(cur);
 		cur = tmp;
@@ -190,8 +251,8 @@ void removeAllItems(LinkedList *ll)
 	ll->size = 0;
 }
 
-
-ListNode * findNode(LinkedList *ll, int index){
+ListNode *findNode(LinkedList *ll, int index)
+{
 
 	ListNode *temp;
 
@@ -203,7 +264,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -213,7 +275,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -221,7 +284,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		if (ll->head == NULL)
@@ -234,10 +298,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		if (pre->next == NULL)
@@ -253,8 +317,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -263,7 +327,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -273,7 +338,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;

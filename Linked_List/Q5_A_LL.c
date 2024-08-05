@@ -102,44 +102,31 @@ int main()
 
 void frontBackSplitLinkedList(LinkedList *ll, LinkedList *resultFrontList, LinkedList *resultBackList)
 {
-	ListNode *cur;
-	// ll의 크기
-	int size = ll->size;
-	// 분기점
-	int splitPoint = 0;
-	cur = ll->head;
-
-	// 짝수, 홀수에 따라 분기점 지정
-	if (splitPoint % 2 == 0)
+	if (ll == NULL || ll->head == NULL)
 	{
-		splitPoint = size / 2;
-	}
-	else
-	{
-		splitPoint = (size / 2) + 1;
-	}
-
-	// ll이 비었을 때
-	if (size == 0)
-	{
-		resultFrontList->head = NULL;
-		resultBackList->head = NULL;
 		return;
 	}
 
-	// 분기점까지 cur을 진행시킴
-	for (int i = 0; i < splitPoint; i++)
+	int halfSize = (ll->size - 1) / 2;
+
+	// resultFrontList의 head와 size 변경
+	ListNode *cur = ll->head;
+	resultFrontList->head = cur;
+	resultFrontList->size = halfSize + 1;
+
+	// resultFrontList의 마지막 요소까지 이동
+	while (halfSize--)
 	{
 		cur = cur->next;
 	}
-	// 프론트 리스트를 ll의 노드의 처음에 연결
-	resultFrontList->head = ll->head;
-
-	// 분기점 이후부터 백 리스트를 연결
+	// resultBackList의 head와 size 변경
 	resultBackList->head = cur->next;
-
-	// 분기점 완전 분리
+	resultBackList->size = ll->size - (halfSize + 1);
 	cur->next = NULL;
+
+	// ll 비움
+	ll->head = NULL;
+	ll->size = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

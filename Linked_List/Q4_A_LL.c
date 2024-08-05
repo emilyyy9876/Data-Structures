@@ -84,41 +84,51 @@ int main()
 
 void moveEvenItemsToBack(LinkedList *ll)
 {
-	ListNode *cur, *prev, *tail;
-	cur = ll->head;
-	int size = ll->size;
-	while (cur != NULL)
-	{
-		prev = cur;
-		cur = cur->next;
-		tail = prev;
-	}
+	if (ll == NULL || ll->head == NULL)
+		return;
 
-	cur = ll->head;
-	prev = NULL;
-	for (int i = 0; i < size; i++)
+	ListNode *dummy = (ListNode *)malloc(sizeof(ListNode));
+	dummy->next = ll->head; //------추가할 것
+
+	ListNode *cur = ll->head;
+	ListNode *EvenStart, *evenEnd, *prev;
+	EvenStart = NULL;
+	evenEnd = NULL;
+	prev = dummy;
+
+	while (cur != NULL)
 	{
 		if (cur->item % 2 == 0)
 		{
-			prev = cur;
-		}
-		else
-		{
-			// 꼬리가 현재(홀수)를 가리킴
-			tail->next = cur;
-			// 이전 노드가 현재(홀수)의 다음을 가리킴
+			if (EvenStart == NULL) // cur이 짝수이고, evenList의 요소가 없을 때
+			{
+				EvenStart = cur;
+				evenEnd = cur;
+				// EvenStart->next = evenEnd;----빼야할 것
+			}
+			else // cur이 짝수이고 , evenlist의 요소가 있을 때
+			{
+				evenEnd->next = cur;
+				evenEnd = evenEnd->next; //---------추가할것
+			}
 			prev->next = cur->next;
-			// 현재(홀수)의 다음을 지움 -> 꼬리가 되기 때문
-			cur->next = NULL;
-			// 현재를 이전 노드로 이동
-			cur = prev;
-			// 꼬리를 다음 노드(홀수)로 이동
-			tail = tail->next;
+		}
+
+		else // cur이 홀수일 때
+		{
+			prev = cur;
 		}
 		cur = cur->next;
 	}
-}
 
+	if (EvenStart != NULL)
+	{
+		evenEnd->next = NULL;	// 짝수 리스트의 끝을 NULL로 설정---추가할 것
+		prev->next = EvenStart; // 기존 리스트의 끝에 짝수 리스트 연결--추가할 것
+	}
+	ll->head = dummy->next; // 새로운 헤드 설정----추가할 것
+	free(dummy);
+}
 ///////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll)

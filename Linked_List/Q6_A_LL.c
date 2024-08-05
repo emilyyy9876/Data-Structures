@@ -85,62 +85,33 @@ int main()
 
 int moveMaxToFront(ListNode **ptrHead)
 {
-	/*
-	1. 함수 시작: moveMaxToFront 함수 시작.
-	2. 리스트가 비어있는지 확인: ptrHead가 NULL이거나 리스트가 비어있는지 확인합니다.
-	3. 최대값 노드와 이전 노드를 찾기 위한 초기화: maxNode와 prevMaxNode를 초기화합니다.
-	4. 현재 노드와 이전 노드를 설정: current와 prev를 초기화합니다.
-	5. 리스트를 순회하며 최대값 노드 찾기:
-		1. 각 노드의 값을 최대값과 비교: 현재 노드의 값이 최대값보다 큰지 확인합니다.
-		2. 최대값 노드 업데이트:
-			1. 최대값 노드를 업데이트합니다.
-			2. 최대값 이전 노드를 업데이트합니다.
-		3. 다음 노드로 이동:
-			1. prev를 현재 노드로 업데이트합니다.
-			2. current를 다음 노드로 업데이트합니다.
-	6. 최대값 노드가 이미 헤드인지 확인:
-		1. 최대값 노드가 이미 헤드인 경우 아무 작업도 하지 않습니다.
-		2. 최대값 노드가 헤드가 아닌 경우:
-			1. 이전 노드의 next를 최대값 노드의 next로 설정합니다.
-			2. 최대값 노드의 next를 현재 헤드로 설정합니다.
-			3. 헤드를 최대값 노드로 업데이트합니다.
-	7. 함수 종료: 최대값을 반환합니다.
-	*/
+	if (*ptrHead == NULL || (*ptrHead)->next == NULL)
+	{
+		return 0;
+	}
 
-	// 1. 함수 시작
-	if (ptrHead == NULL || *ptrHead == NULL)
-		return -1; // 2. 리스트가 비어있는지 확인
-
-	ListNode *maxNode = *ptrHead; // 3. 최대값 노드와 이전 노드를 찾기 위한 초기화
-	ListNode *prevMaxNode = NULL;
-
-	ListNode *current = *ptrHead; // 4. 현재 노드와 이전 노드를 설정
+	ListNode *cur = *ptrHead;
+	ListNode *max = *ptrHead;
 	ListNode *prev = NULL;
 
-	// 5. 리스트를 순회하며 최대값 노드 찾기
-	while (current != NULL)
+	while (cur->next != NULL)
 	{
-		if (current->item > maxNode->item)
-		{					   // 5.1. 각 노드의 값을 최대값과 비교
-			maxNode = current; // 5.2. 최대값 노드 업데이트
-			prevMaxNode = prev;
+		// 현재 요소의 item이 max보다 크면 max 갱신
+		if (max->item < cur->next->item)
+		{
+			max = cur->next;
+			prev = cur;
 		}
-		prev = current; // 5.3. 다음 노드로 이동
-		current = current->next;
+		cur = cur->next;
 	}
 
-	if (maxNode == *ptrHead)
-		return maxNode->item; // 6. 최대값 노드가 이미 헤드인지 확인
-
-	// 6.2. 최대값 노드가 헤드가 아닌 경우
-	if (prevMaxNode != NULL)
+	// 가장 큰 item을 가지는 요소를 리스트의 head로 이동
+	if (max != *ptrHead)
 	{
-		prevMaxNode->next = maxNode->next; // 6.2.1. 이전 노드의 next를 최대값 노드의 next로 설정
+		prev->next = max->next;
+		max->next = *ptrHead;
+		*ptrHead = max;
 	}
-	maxNode->next = *ptrHead; // 6.2.2. 최대값 노드의 next를 현재 헤드로 설정
-	*ptrHead = maxNode;		  // 6.2.3. 헤드를 최대값 노드로 업데이트
-
-	return maxNode->item; // 7. 함수 종료: 최대값을 반환합니다.
 }
 //////////////////////////////////////////////////////////////////////////////////
 

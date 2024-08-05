@@ -84,39 +84,52 @@ int main()
 
 void moveOddItemsToBack(LinkedList *ll)
 {
-	ListNode *cur, *prev, *tail;
+	if (ll == NULL || ll->head == NULL)
+		return;
+
+	ListNode *dummy = (ListNode *)malloc(sizeof(ListNode));
+	dummy->next = ll->head; //------추가할 것
+
+	ListNode *cur;
 	cur = ll->head;
-	int size = ll->size;
+	ListNode *oddStart, *oddEnd, *prev;
+	oddStart = NULL;
+	oddEnd = NULL;
+	prev = dummy;
+	// prev->next = cur;-----빼야할 것-중복됨
+
 	while (cur != NULL)
 	{
-		prev = cur;
-		cur = cur->next;
-		tail = prev;
-	}
+		if (cur->item % 2 != 0)
+		{
+			if (oddStart == NULL)
+			{
+				oddStart = cur;
+				oddEnd = cur;
+				// oddStart->next = oddEnd;----빼야할 것
+			}
+			else
+			{
+				oddEnd->next = cur;
+				oddEnd = oddEnd->next; //---------추가할것
+			}
+			prev->next = cur->next;
+		}
 
-	cur = ll->head;
-	prev = NULL;
-	for (int i = 0; i < size; i++)
-	{
-		if (cur->item % 2 == 0)
+		else
 		{
 			prev = cur;
 		}
-		else
-		{
-			// 꼬리가 현재(홀수)를 가리킴
-			tail->next = cur;
-			// 이전 노드가 현재(홀수)의 다음을 가리킴
-			prev->next = cur->next;
-			// 현재(홀수)의 다음을 지움 -> 꼬리가 되기 때문
-			cur->next = NULL;
-			// 현재를 이전 노드로 이동
-			cur = prev;
-			// 꼬리를 다음 노드(홀수)로 이동
-			tail = tail->next;
-		}
 		cur = cur->next;
 	}
+
+	if (oddStart != NULL)
+	{
+		oddEnd->next = NULL;   // 홀수 리스트의 끝을 NULL로 설정---추가할 것
+		prev->next = oddStart; // 기존 리스트의 끝에 홀수 리스트 연결--추가할 것
+	}
+	ll->head = dummy->next; // 새로운 헤드 설정----추가할 것
+	free(dummy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
